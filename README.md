@@ -133,79 +133,83 @@
     ```bash
     docker run -it --name aafire_container2 --rm aafire
     ```
-
+    ![docker run -it en 2 contenedores](https://github.com/user-attachments/assets/9dc53873-cec4-4e4c-a814-b654a5b9b632)  
     -> Эти команды создают и запускают два контейнера с именами `aafire_container1` и `aafire_container2`. Флаг `--rm` указывает Docker автоматически удалять контейнер после его остановки. Оба контейнера запускают приложение `aafire` и отображают анимацию огня одновременно.
 
 #### 5. Создание сети Docker и Подключение контейнеров к сети
   - Я создал сеть для контейнеров с помощью команды:
     ```bash
     docker network create myNetwork
-    ```
-
+    ```  
+      ![docker network create myNetwork](https://github.com/user-attachments/assets/9f625b1c-6b33-42fa-b4de-1959211fd3cd)  
     -> Эта команда создает новую виртуальную сеть Docker, которая позволяет контейнерам общаться друг с другом. Создание сети необходимо для настройки связи между контейнерами.  
-  - Я подключил контейнеры к созданной сети:
+  - Я подключил контейнеры к созданной сети:  
     ```bash
     docker network connect myNetwork aafire_container1
     docker network connect myNetwork aafire_container2
-    ```
-
-    -> Эти команды подключают контейнеры `aafire_container1` и `aafire_container2` к сети `myNetwork`, что позволяет им обмениваться данными и использовать утилиты, такие как `ping`, для проверки соединения.
+    ```  
+       ![docker network connect myNetwork aafire_container](https://github.com/user-attachments/assets/dd43f28e-6615-4393-a3b8-e6936d4b49c3)  
+    -> Эти команды подключают контейнеры `aafire_container1` и `aafire_container2` к сети `myNetwork`, что позволяет им обмениваться данными и использовать утилиты, такие как `ping`, для проверки соединения.  
   - Я проверил настройки созданной сети с помощью команды:
     ```bash
     docker network inspect myNetwork
-    ```
-    
-    - В выводе я увидел, что оба контейнера `aafire_container1` и `aafire_container2` подключены к сети `myNetwork`.
+    ```  
+       ![docker network inspect myNetwork](https://github.com/user-attachments/assets/9c817955-a96c-446a-aeab-358906b6c17b)  
+    - В выводе я увидел, что оба контейнера `aafire_container1` и `aafire_container2` подключены к сети `myNetwork`.  
 
-#### 6. Установка утилит внутри контейнеров
-  - Я выполнил команду для доступа к контейнеру `aafire_container1`:
+#### 6. Установка утилит внутри контейнеров  
+  - Я выполнил команду для доступа к контейнеру `aafire_container1`:  
     ```bash
     docker exec -it aafire_container1 bash
-    ```
+    ```  
     - Внутри контейнера я выполнил команду:
     ```bash
     apt-get update && apt-get install -y iproute2
     ```
-    
+    ![install iproute2 container2](https://github.com/user-attachments/assets/bd397588-4295-414b-9ef1-8dbfa98f38ae)    
     -> Эта команда обновляет список пакетов и устанавливает пакет `iproute2`, который необходим для работы с сетевыми интерфейсами и маршрутизацией. Установка этого пакета была необходима для выполнения команды `ping`.  
   - Я выполнил ту же команду для контейнера `aafire_container2`.
 
 #### 7. Проверка соединения между контейнерами
   - Я проверил IP-адреса контейнеров с помощью команд:
-    ```bash
-    docker exec aafire_container1 ip a
-    ```
-    - Я увидел IP-адрес контейнера1 `172.17.0.2`.
-    ```bash
-    docker exec aafire_container2 ip a
-    ```
-    - Я увидел IP-адрес контейнера2 `172.17.0.3`.
+  - Для контейнера `aafire_container1`:
+      ```bash
+      docker exec aafire_container1 ip a
+      ```
+      ![docker exec container1](https://github.com/user-attachments/assets/626ca288-3e38-433a-9199-7608c9319997)  
+      - Я увидел IP-адрес контейнера1 `172.17.0.2`.  
+  - Для контейнера `aafire_container2`:
+      ```bash
+      docker exec aafire_container2 ip a
+      ```
+      ![docker exec container2](https://github.com/user-attachments/assets/dcc7a748-e04a-48f0-bafc-3711a8754062)  
+      - Я увидел IP-адрес контейнера2 `172.17.0.3`.
    
-    - Я протестировал соединение между контейнерами с помощью команды ping:
-    ```bash
-    docker exec -it aafire_container1 ping -c 10 172.17.0.3
-    ```
-    
-    - Показано, что *"10 packets transmitted, 10 received"*, что подтверждает успешное соединение между контейнерами.
+   - Я протестировал соединение между контейнерами с помощью команды ping:
+      ```bash
+      docker exec -it aafire_container1 ping -c 10 172.17.0.3
+      ```
+      ![ping container1 to 2](https://github.com/user-attachments/assets/3a84e3c7-7de2-429e-89f4-a6f1a3c91cfb)  
+         - Показано, что *"10 packets transmitted, 10 received"*, что подтверждает успешное соединение между контейнерами.  
 
-  - Я выполнил ту же команду для контейнера2:
-    ```bash
-    docker exec -it aafire_container2 ping -c 10 172.17.0.2
-    ```
-    
-    - Также показано, что *"10 packets transmitted, 10 received"*, что подтверждает успешное соединение в обе стороны.
+   - Я выполнил ту же команду для контейнера2:
+      ```bash
+      docker exec -it aafire_container2 ping -c 10 172.17.0.2
+      ```
+      ![ping container2 to 1](https://github.com/user-attachments/assets/80b6f091-3bcd-4cbb-9ad6-33df8e2bb471)  
+         - Также показано, что *"10 packets transmitted, 10 received"*, что подтверждает успешное соединение в обе стороны.
     
 #### 8. Остановка контейнеров
-  - Я снова проверил запущенные контейнеры с помощью команды:
-    ```bash
-    docker ps
-    ```
-    
-    - Я там увидел `aafire_container1` и `aafire_container2`.  
-  - В конце я остановил оба контейнера с помощью команды:
-    ```bash
-    docker stop aafire_container1 aafire_container2
-    ```
+   - Я снова проверил запущенные контейнеры с помощью команды:
+      ```bash
+      docker ps
+      ```
+      ![docker ps con container1 y 2 aafire](https://github.com/user-attachments/assets/610e09b4-4e2b-4079-b8ec-8958433c6a11)  
+         - Я там увидел `aafire_container1` и `aafire_container2`.  
+   - В конце я остановил оба контейнера с помощью команды:
+      ```bash
+      docker stop aafire_container1 aafire_container2
+      ```
 
 ---
 
